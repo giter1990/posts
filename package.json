@@ -1,7 +1,7 @@
 {
   "name": "blog",
   "version": "1.0.0",
-  "description": "delelopment a single fake blog post grid and a form to manage blog posts ",
+  "description": "delelopment a single fake blog post grid and a form to manage blog posts",
   "main": "index.js",
   "scripts": {
     "test": "test"
