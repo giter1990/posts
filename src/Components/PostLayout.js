@@ -25,8 +25,6 @@ class PostLayout extends React.Component {
 			title = this.props.title,
 			bodyPost = this.props.bodyPost;
 			
-		console.log(title);
-		
 		this.props.mountMe(index, title, bodyPost);
 	}
 	
