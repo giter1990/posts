@@ -6,11 +6,12 @@ const path = require("path"),
 		hot: true
 	}),
 	WebpackMildCompile = require("webpack-mild-compile").Plugin,
-	{ CleanWebpackPlugin } = require("clean-webpack-plugin");
+	{ CleanWebpackPlugin } = require("clean-webpack-plugin"),
+	TerserPlugin = require("terser-webpack-plugin");
 	
 module.exports = {
 	entry: "./src/index.js",
-	mode: "development",
+	mode: "production",
 	module: {
 		rules: [
 			{
@@ -41,10 +42,21 @@ module.exports = {
 			}
 		]
 	},
+	optimization: {
+		minimize: true,
+		minimizer: [
+			new TerserPlugin({
+				test: /\.js$/,
+				parallel: true,
+				extractComments: false
+			})
+		]
+	},
 	resolve: { extensions: ["*", ".js", ".jsx"] },
 	output: {
 		path: path.resolve(__dirname, "./public/"),
-		filename: "bundle.min.js"
+		filename: "bundle.min.js",
+		chunkFilename: "[id].min.js"
 	},
 	devServer: {
 		open: true,
@@ -66,11 +78,7 @@ module.exports = {
 		}),
 		new WebpackMildCompile(),
 		new CleanWebpackPlugin({
-			cleanOnceBeforeBuildPatterns: [
-				"0.*.hot-update.js",
-				"1.*.hot-update.js",
-				"main.*.hot-update.js"
-			],
+			cleanOnceBeforeBuildPatterns: ["*.*.hot-update.js"],
 			cleanStaleWebpackAssets: false
 		})
 	]
