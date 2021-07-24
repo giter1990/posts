@@ -1,17 +1,18 @@
-import React, { Component, useState } from "react";
+import React, { FC, Component, useState } from "react";
 import { hot } from "react-hot-loader";
 import ReactDOM from "react-dom";
 import loadable from "@loadable/component";
 import { Grid, Fab, Modal, Paper, Typography, TextField, Button } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
 import { Create, BorderColor, Close } from "@material-ui/icons";
 import { useForm, Controller } from "react-hook-form";
 import useStyles from "./js/make-styles.js";
 import generatePosts from "./js/generate-posts.js";
+import "@fontsource/roboto/700.css";
 
 const Post = loadable(() => import("./Components/Post.js")),
 	AddModal = loadable(() => import("./Components/AddModal.js")),
-	EditModal = loadable(() => import("./Components/EditModal.js"));
+	EditModal = loadable(() => import("./Components/EditModal.js")),
+	ConfirmModal = loadable(() => import("./Components/ConfirmModal.js"));
 let changeCount = 0,
 	incrKey = 0,
 	arrIdDefaultDel = [],
@@ -25,14 +26,24 @@ let changeCount = 0,
 	renderDefaultTitle,
 	renderDefaultBody,
 	renderCustomTitle,
-	renderCustomBody;
+	renderCustomBody,
+	indexPost,
+	idPost;
+	
+interface Count {
+	length: number;
+	indexOf: number;
+	title: string;
+	body: string;
+}
 	
 function Main() {
 	const classes = useStyles(),
-		[count, setCount] = useState(0),
+		[count, setCount] = useState<Count[]>([]),
 		[renderChild, setRenderChild] = useState(true),
 		[openAddModal, setOpenAddModal] = useState(false),
 		[openEditModal, setOpenEditModal] = useState(false),
+		[openConfirmModal, setOpenConfirmModal] = useState(false),
 		[order, setOrder] = useState(),
 		refTitle = { id: "fieldTitle" },
 		refBody = {	id: "fieldBody" },
@@ -59,6 +70,14 @@ function Main() {
 		setOpenEditModal(false);
 	}
 	
+	function openConfimWindow() {
+		setOpenConfirmModal(true);
+	}
+	
+	function closeConfimWindow() {
+		setOpenConfirmModal(false);
+	}
+	
 	function addPost(e, title, body) {
 		import("./js/add-post.js")
 			.then(module => {
@@ -69,8 +88,8 @@ function Main() {
 	function handleChildMount(e) {
 		e.preventDefault();
 		
-		let fieldTitle = document.getElementById("fieldTitle"),
-			fieldBody = document.getElementById("fieldBody");
+		let fieldTitle = document.getElementById("fieldTitle") as any,
+			fieldBody = document.getElementById("fieldBody") as any;
 		
 		if (changeCount === 0) {
 			setRenderChild(false);
@@ -123,6 +142,13 @@ function Main() {
 	}
 			
 	function handleChildUnmount(number, identifier) {
+		indexPost = number;
+		idPost = identifier;
+		
+		openConfimWindow();
+	}
+	
+	function confirmDeleting(number, identifier) {
 		if (changeCount === 0) {
 			setRenderChild(false);
 		}
@@ -150,13 +176,13 @@ function Main() {
 			
 	let fieldTitle = document.getElementById("fieldTitle"),
 		fieldBody = document.getElementById("fieldBody");
-	
+		
 	return (
 		<Grid container>
 			<Grid item container className={classes.grid} xs={12}>
 				{generatePosts(count, renderChild, arrPostAdd, editPost, handleChildUnmount, classes, openPostIndex, renderCustomTitle, renderCustomBody, arrIdDefaultDel, renderDefaultTitle, renderDefaultBody, renderDefaultIndex, arrIdCustomDel, incrKey)}
 			</Grid>
-			<Fab variant="extended" className={classes.fab} color="primary" aria-label="add" aria-label="edit" onClick={createPost}>
+			<Fab variant="extended" className={classes.fab} color="primary" aria-label="add" onClick={createPost}>
 				<Create className={classes.extendedIcon} />Create post
 			</Fab>
 			<AddModal
@@ -185,6 +211,14 @@ function Main() {
 				refTitle={refTitle}
 				refBody={refBody}
 				handleChildMount={handleChildMount}
+			/>
+			<ConfirmModal 
+				openConfirmModal={openConfirmModal}
+				closeConfimWindow={closeConfimWindow}
+				deleteMe={confirmDeleting}
+				indexPost={indexPost}
+				idPost={idPost}
+				classes={classes}
 			/>
 		</Grid>
 	)

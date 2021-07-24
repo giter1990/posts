@@ -1,3 +1,5 @@
+// "typescript": "^3.0.1"
+
 const path = require("path"),
 	webpack = require("webpack"),
 	HtmlWebpackPlugin = require("html-webpack-plugin"),
@@ -20,6 +22,15 @@ module.exports = {
 				loader: "babel-loader",
 				options: { presets: ["@babel/env"] }
 			},
+			{ 
+				test: /\.(jsx?|tsx?)$/,
+				loader: "awesome-typescript-loader",
+				exclude: /node_modules/
+			},
+			{
+				test: /\.js$/,
+				loader: "source-map-loader"
+			},
 			{
 				test: /\.(pug)$/,
 				include: path.join(__dirname, "src/"),
@@ -39,6 +50,31 @@ module.exports = {
 						}
 					}
 				]
+			},
+			{
+				test: /\.css$/i,
+				use: [
+					{
+						loader: "file-loader",
+						options: {
+							name: "[name].[ext]",
+							esModule: false
+						}
+					}
+				]
+			},
+			{
+				test: /\.(woff|woff2)$/i,
+				use: [
+					{
+						loader: "file-loader",
+						options: {
+							name: "[name].[ext]",
+							outputPath: "./files/",
+							esModule: false
+						}
+					}
+				]
 			}
 		]
 	},
@@ -52,7 +88,10 @@ module.exports = {
 			})
 		]
 	},
-	resolve: { extensions: ["*", ".js", ".jsx"] },
+	resolve: {
+		extensions: ["*", ".js", ".jsx", ".ts", ".tsx"],
+		modules: ["node_modules"]
+	},
 	output: {
 		path: path.resolve(__dirname, "./public/"),
 		filename: "bundle.min.js",

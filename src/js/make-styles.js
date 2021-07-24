@@ -36,7 +36,8 @@ const useStyles = makeStyles((theme) => ({
 	},
 	header: {
 		color: theme.palette.success.main,
-		fontWeight: "bold",
+		fontFamily: "'Roboto', sans-serif",
+		fontWeight: 700,
 		textTransform: "uppercase"
 	},
 	body: {
@@ -69,6 +70,9 @@ const useStyles = makeStyles((theme) => ({
 	buttonModal: {
 		margin: "15px auto 0",
 		width: "fit-content"
+	},
+	buttonFailure: {
+		marginLeft: 15
 	},
 	buttonCard: {
 		alignSelf: "end",
